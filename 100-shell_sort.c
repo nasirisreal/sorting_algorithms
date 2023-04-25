@@ -1,46 +1,42 @@
 #include "sort.h"
+
 /**
- * shell_sort - function that sorts an array
- * of integers in ascending order using the
- * Shell sort algorithm
- *
- * @array: input arrray
- * @size: size of the array
- * Return: no return
+ * shell_sort - sorts an array of integers in ascending order using a shell
+ * sort algorithm, with gap sizes determined by a decreasing Knuth seqeuence
+ * @array: array of integers to be sorted
+ * @size: amount of elements in array
  */
 void shell_sort(int *array, size_t size)
 {
-	size_t n = 1;
+	int i, j, gap, n, Knuth_max, temp;
 
-	while (n < size)
-		n = (n * 3) + 1;
+	if (!array || size < 2)
+		return;
 
-	while ((n = (n - 1) / 3) > 0)
-		_ssort(array, size, n);
-}
-/**
- * _ssort - auxiliar function for
- * shell_sort function
- * @a: input arrray
- * @size: size of the array
- * @n: intervale
- * Return: no return
- */
-void _ssort(int *a, int size, int n)
-{
-	int tmp, i, j;
-
-	for (i = 0; (i + n) < size; i++)
+	n = (int)size;
+	for (gap = 1; gap < n; gap = (gap * 3) + 1)
 	{
-		for (j = i + n; (j - n) >= 0; j = j - n)
-		{
-			if (a[j] < a[j - n])
-			{
-				tmp = a[j];
-				a[j] = a[j - n];
-				a[j - n] = tmp;
-			}
-		}
+		Knuth_max = gap;
 	}
-	print_array(a, size);
+/* Start with the largest Knuth seq value less than n as gap, */
+/* and work down sequence to a gap of 1 */
+	for (gap = Knuth_max; gap > 0; gap = (gap - 1) / 3)
+	{
+		/* Do a gapped insertion sort for this gap size. */
+		for (i = gap; i < n; i++)
+		{
+			/* add array[i] to gap sorted elements; */
+			/* save array[i] in temp in preparation to overwrite */
+			temp = array[i];
+			/* shift earlier gap-sorted elements up until the */
+			/* correct location for array[i] is found */
+			for (j = i; j >= gap && array[j - gap] > temp; j -= gap)
+			{
+				array[j] = array[j - gap];
+			}
+/* temp original array[i]) to its correct location */
+			array[j] = temp;
+		}
+		print_array(array, size);
+	}
 }
