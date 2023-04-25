@@ -10,9 +10,9 @@
  * @size: amount of elements in array
  * Return: new index at which to start new recursive partition
  */
-int partition(int *array, int low, int high, size_t size)
+size_t partition(int *array, size_t low, size_t high, size_t size)
 {
-	int i, j, pivot, temp;
+	size_t i, j, pivot, temp;
 
 	pivot = array[high];
 	i = low;
@@ -23,7 +23,7 @@ int partition(int *array, int low, int high, size_t size)
 			temp = array[i];
 			array[i] = array[j];
 			array[j] = temp;
-			if (array[i] != array[j])
+			if (i != j)
 				print_array(array, size);
 			i++;
 		}
@@ -31,7 +31,7 @@ int partition(int *array, int low, int high, size_t size)
 	temp = array[i];
 	array[i] = array[high];
 	array[high] = temp;
-	if (array[i] != array[high])
+	if (i != high)
 		print_array(array, size);
 	return (i);
 }
@@ -44,9 +44,9 @@ int partition(int *array, int low, int high, size_t size)
  * @high: index in array that ends partition
  * @size: amount of elements in array
  */
-void quicksort(int *array, int low, int high, size_t size)
+void quicksort(int *array, size_t low, size_t high, size_t size)
 {
-	int p;
+	size_t p;
 
 	if (low < high)
 	{
@@ -67,5 +67,6 @@ void quick_sort(int *array, size_t size)
 	if (!array || size < 2)
 		return;
 
-	quicksort(array, 0, (int)size - 1, size);
+	quicksort(array, 0, size - 1, size);
 }
+
