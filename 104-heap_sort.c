@@ -1,84 +1,104 @@
 #include "sort.h"
-#include <stdio.h>
+
 /**
- * swap_nums - swaps numbers
- *
- * @arr: input array
- * @a: first index
- * @b: second index
- * Return: no return
+ * iParent - returns index of parent node for an array arranged as a binary
+ * tree, for index i
+ * @i: starting index to determine parent node index
+ * Return: index of parent node
  */
-void swap_nums(int *arr, int a, int b)
+int iParent(int i)
 {
-	arr[a] = arr[a] + arr[b];
-	arr[b] = arr[a] - arr[b];
-	arr[a] = arr[a] - arr[b];
+	return ((i - 1) / 2);
 }
 
 /**
- * recursion_heap - recursion that builds the max heap tree
- *
- * @arr: input array
- * @i: index number
- * @size: size of the array
- * @limit: limit of the array
- * Return: no return
+ * iLeftChild- returns index of left child branch for an array arranged as
+ * a binary tree, for index i
+ * @i: starting index to determine left child branch index
+ * Return: index of left child node
  */
-void recursion_heap(int *arr, int i, size_t size, int limit)
+int iLeftChild(int i)
 {
-	int bigger;
-	int i2;
+	return ((2 * i) + 1);
+}
 
-	i2 = i * 2;
+/**
+ * ConvertToHeap - arranges array of integers into a heap/binary tree scheme
+ * @array: array of integers
+ * @size: number of elements in array
+ */
+void ConvertToHeap(int *array, size_t size)
+{
+	int start;
 
-	if (i2 + 2 < limit)
+	start = iParent(size - 1);
+
+	while (start >= 0)
 	{
-		recursion_heap(arr, i2 + 1, size, limit);
-		recursion_heap(arr, i2 + 2, size, limit);
-	}
-
-	if (i2 + 1 >= limit)
-		return;
-
-	if (i2 + 2 < limit)
-		bigger = (arr[i2 + 1] > arr[i2 + 2]) ? (i2 + 1) : (i2 + 2);
-	else
-		bigger = i2 + 1;
-
-	if (arr[i] < arr[bigger])
-	{
-		swap_nums(arr, i, bigger);
-		print_array(arr, size);
-		recursion_heap(arr, bigger, size, limit);
+		SiftDown(array, size, start, size - 1);
+		start--;
 	}
 }
 
 /**
- * heap_sort - sorts an array of integers in ascending
- * order using the Heap sort algorithm
- *
- * @array: input array
- * @size: size of the array
+ * SiftDown - shuffles heap/binary tree sorted array into array sorted by
+ * ascending value
+ * @array: array of values to be sorted in place, from heap to ascending
+ * @size: number of elements in array
+ * @start: starting index
+ * @end: ending index
+ */
+void SiftDown(int *array, size_t size, int start, int end)
+{
+	int root, swap, temp, child;
+
+	root = start;
+
+	while (iLeftChild(root) <= end)
+	{
+		child = iLeftChild(root);
+		swap = root;
+
+		if (array[swap] < array[child])
+			swap = child;
+		if (child + 1 <= end && array[swap] < array[child + 1])
+			swap = child + 1;
+		if (swap != root)
+		{
+			temp = array[root];
+			array[root] = array[swap];
+			array[swap] = temp;
+			print_array(array, size);
+			root = swap;
+		}
+		else
+			return;
+	}
+}
+
+/**
+ * heap_sort - sorts array of integers in ascending order using a heap sort
+ * sift-down alogrithm
+ * @array: array of values to be sorted
+ * @size: number of elements in array
  */
 void heap_sort(int *array, size_t size)
 {
-	int i;
-	size_t limit;
+	int iEnd, temp;
 
-	if (!array || size == 0)
+	if (!array || size < 2)
 		return;
 
-	i = 0;
-	limit = size;
+	ConvertToHeap(array, size);
 
-	while (limit > 1)
+	iEnd =  (int)size - 1;
+	while (iEnd > 0)
 	{
-		recursion_heap(array, i, size, limit);
-		if (array[i] >= array[limit - 1])
-		{
-			swap_nums(array, i, limit - 1);
-			print_array(array, size);
-		}
-		limit--;
+		temp = array[iEnd];
+		array[iEnd] = array[0];
+		array[0] = temp;
+		print_array(array, size);
+		iEnd--;
+		SiftDown(array, size, 0, iEnd);
 	}
 }
