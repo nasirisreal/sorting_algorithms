@@ -44,7 +44,7 @@ int partition(int *array, int low, int high, size_t size)
  * @high: index in array that ends partition
  * @size: amount of elements in array
  */
-void quick_sort(int *array, int low, int high, size_t size)
+void quicksort(int *array, int low, int high, size_t size)
 {
 	int p;
 
