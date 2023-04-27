@@ -1,133 +1,88 @@
 #include "sort.h"
 
 /**
- * hoare_partition - Hoare partition scheme using rightmost index as pivot;
- * other pivot implementations exist, with some with greater efficiency: see
- * peudocode below function defs for middle or low pivot schema
- * @array: array of integers to be sorted
- * @low: index in source array that begins partition
- * @high: index in source array that ends partition
- * @size: amount of elements in array
- * Return: new index at which to start new recursive partition
+ * _swap - swaps two values in an array
+ *
+ * @array: data to sort
+ * @i: first value
+ * @j: second value
+ *
+ * Return: No Return
  */
-int hoare_partition(int *array, size_t low, size_t high, size_t size)
+void _swap(int *array, int i, int j)
 {
-	int i, j, pivot, temp;
+	int tmp;
 
-	pivot = array[high];
-	i = low - 1;
-	j = high + 1;
-	while (true)
+	tmp = array[i];
+	array[i] = array[j];
+	array[j] = tmp;
+}
+
+/**
+ * partition - sorts a partition of data in relation to a pivot
+ *
+ * @array: data to sort
+ * @min: Left wall
+ * @max: right wall
+ * @size: size of data
+ *
+ * Return: New Pivot
+ */
+int partition(int *array, int min, int max, size_t size)
+{
+	int i, j, pivot = array[max];
+
+	for (i = min, j = max; 1; i++, j--)
 	{
-		do {
+		while (array[i] < pivot)
 			i++;
-		} while (array[i] < pivot);
-		do {
+
+		while (array[j] > pivot)
 			j--;
-		} while (array[j] > pivot);
-		if (i == j)
-			return (j - 1);
-		else if (i > j)
-			return (j);
-		temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
+
+		if (i >= j)
+			return (i);
+		_swap(array, i, j);
 		print_array(array, size);
 	}
 }
 
 /**
- * hoare_quicksort - recursively sorts array of integers by separating into two
- * partitions, using Hoare quick sort
- * @array: array of integers to be sorted
- * @low: index in source array that begins partition
- * @high: index in source array that ends partition
- * @size: amount of elements in array
+ * quicksort -  sorts an array of integers in ascending order using the
+ * Quick sort algorithm Lomuto partition scheme
+ *
+ * @array: data to sort
+ * @min: Left wall
+ * @max: right wall
+ * @size: size of data
+ *
+ * Return: No Return
  */
-void hoare_quicksort(int *array, size_t low, size_t high, size_t size)
+void quicksort(int *array, int min, int max, size_t size)
 {
-	size_t border;
+	int p;
 
-	if (low < high)
+	if (min < max)
 	{
-		border = hoare_partition(array, low, high, size);
-		hoare_quicksort(array, low, border, size);
-		hoare_quicksort(array, border + 1, high, size);
+		p = partition(array, min, max, size);
+		quicksort(array, min, p - 1, size);
+		quicksort(array, p, max, size);
 	}
 }
 
 /**
- * quick_sort_hoare - sorts array of integers in ascending order using a quick
- * sort, Hoare partition scheme alogrithm
- * @array: array of values to be printed
- * @size: number of elements in array
+ * quick_sort_hoare -  sorts an array of integers in ascending order using the
+ * Quick sort algorithm Hoare partition scheme
+ *
+ * @array: data to sort
+ * @size: size of data
+ *
+ * Return: No Return
  */
 void quick_sort_hoare(int *array, size_t size)
 {
 	if (!array || size < 2)
 		return;
 
-	hoare_quicksort(array, 0, size - 1, size);
+	quicksort(array, 0, size - 1, size);
 }
-
-/*
- * Lomuto pseudo:
- *
- * algorithm quicksort(A, lo, hi) is
- *   if lo < hi then
- *       p := partition(A, lo, hi)
- *       quicksort(A, lo, p - 1)
- *       quicksort(A, p + 1, hi)
- *
- * algorithm partition(A, lo, hi) is
- *   pivot := A[hi]
- *   i := lo
- *   for j := lo to hi do
- *       if A[j] < pivot then
- *           swap A[i] with A[j]
- *           i := i + 1
- *   swap A[i] with A[hi]
- *   return i
- *
- * Hoare pseudo:
- *
- * algorithm quicksort(A, lo, hi) is
- *   if lo < hi then
- *       partition_border := partition(A, lo, hi)
- *       quicksort(A, lo, partition_border)
- *       quicksort(A, partition_border + 1, hi)
- *
- * (using middle pivot):
- *
- * algorithm partition(A, lo, hi) is
- *    pivot := A[(hi + lo) / 2] // depends on rounding towards 0, as in C
- *   i := lo
- *   j := hi
- *   loop forever
- *       while A[i] < pivot
- *           i := i + 1
- *       while A[j] > pivot
- *           j := j - 1
- *       if i  j then
- *           return j
- *       swap A[i] with A[j]
- *       i := i + 1
- *       j := j - 1
- *
- * (using first pivot):
- *
- * algorithm partition(A, lo, hi) is
- *   pivot := A[lo]
- *   i := lo - 1
- *   j := hi + 1
- *   loop forever
- *       do
- *           i := i + 1
- *       while A[i] < pivot
- *	do
- *           j := j - 1
- *       while A[j] > pivot
- *       if i >= j then
- *           return j
- *       swap A[i] with A[j]
- */       
